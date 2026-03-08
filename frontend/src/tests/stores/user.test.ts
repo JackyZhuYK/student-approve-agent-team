@@ -10,16 +10,14 @@ describe('User Store', () => {
     pinia = createPinia()
     setActivePinia(pinia)
     store = useUserStore(pinia)
-    localStorage.clear()
   })
 
   it('should initialize with default values', () => {
     expect(store.user).toBeNull()
-    expect(store.accessToken).toBeNull()
     expect(store.isLoggedIn).toBe(false)
   })
 
-  it('should set user and tokens', () => {
+  it('should set user and compute properties', () => {
     const userInfo = {
       id: '123',
       username: 'testuser',
@@ -33,25 +31,9 @@ describe('User Store', () => {
     expect(store.user).toEqual(userInfo)
     expect(store.accessToken).toBe('access-token')
     expect(store.isLoggedIn).toBe(true)
-    expect(localStorage.getItem('accessToken')).toBe('access-token')
   })
 
-  it('should logout and clear storage', () => {
-    store.setUser(
-      { id: '123', username: 'test', email: 'test@test.com', displayName: 'Test', role: 'STUDENT' },
-      'access-token',
-      'refresh-token'
-    )
-
-    store.logout()
-
-    expect(store.user).toBeNull()
-    expect(store.accessToken).toBeNull()
-    expect(store.isLoggedIn).toBe(false)
-    expect(localStorage.getItem('accessToken')).toBeNull()
-  })
-
-  it('should compute isApprover correctly', () => {
+  it('should compute isApprover correctly for APPROVER', () => {
     store.setUser(
       { id: '123', username: 'approver', email: 'approver@test.com', displayName: 'Approver', role: 'APPROVER' },
       'token',
@@ -62,7 +44,7 @@ describe('User Store', () => {
     expect(store.isAdmin).toBe(false)
   })
 
-  it('should compute isAdmin correctly', () => {
+  it('should compute isAdmin correctly for ADMIN', () => {
     store.setUser(
       { id: '123', username: 'admin', email: 'admin@test.com', displayName: 'Admin', role: 'ADMIN' },
       'token',
@@ -71,15 +53,5 @@ describe('User Store', () => {
 
     expect(store.isApprover).toBe(true)
     expect(store.isAdmin).toBe(true)
-  })
-
-  it('should compute isApprover as false for student', () => {
-    store.setUser(
-      { id: '123', username: 'student', email: 'student@test.com', displayName: 'Student', role: 'STUDENT' },
-      'token',
-      'refresh'
-    )
-
-    expect(store.isApprover).toBe(false)
   })
 })

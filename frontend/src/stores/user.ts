@@ -2,10 +2,18 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { UserInfo } from '@/api/auth'
 
+function getLocalStorageItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
 export const useUserStore = defineStore('user', () => {
   const user = ref<UserInfo | null>(null)
-  const accessToken = ref<string | null>(localStorage.getItem('accessToken'))
-  const refreshToken = ref<string | null>(localStorage.getItem('refreshToken'))
+  const accessToken = ref<string | null>(getLocalStorageItem('accessToken'))
+  const refreshToken = ref<string | null>(getLocalStorageItem('refreshToken'))
 
   const isLoggedIn = computed(() => !!accessToken.value)
   const userRole = computed(() => user.value?.role || '')
