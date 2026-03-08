@@ -47,22 +47,22 @@ class HttpClient {
   }
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.get<any, { data: T }>(url, config)
+    const response = await this.instance.get(url, config)
     return response.data
   }
 
   public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.post<any, { data: T }>(url, data, config)
+    const response = await this.instance.post(url, data, config)
     return response.data
   }
 
   public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.put<any, { data: T }>(url, data, config)
+    const response = await this.instance.put(url, data, config)
     return response.data
   }
 
   public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.delete<any, { data: T }>(url, config)
+    const response = await this.instance.delete(url, config)
     return response.data
   }
 }
