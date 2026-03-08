@@ -92,12 +92,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { applicationApi } from '@/api'
+import { applicationApi, type PageResponse, type Application } from '@/api'
 import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 
 const userStore = useUserStore()
-const recentApplications = ref([])
+const recentApplications = ref<Application[]>([])
 const stats = ref({
   pending: 0,
   inReview: 0,
@@ -109,7 +109,7 @@ const isApprover = computed(() => userStore.isApprover)
 
 onMounted(async () => {
   try {
-    const response = isApprover.value
+    const response: PageResponse<Application> = isApprover.value
       ? await applicationApi.getPending()
       : await applicationApi.getList()
 
@@ -117,16 +117,16 @@ onMounted(async () => {
 
     // Calculate stats
     stats.value.pending = response.content.filter(
-      (a: any) => a.status === 'PENDING'
+      (a) => a.status === 'PENDING'
     ).length
     stats.value.inReview = response.content.filter(
-      (a: any) => a.status === 'IN_REVIEW'
+      (a) => a.status === 'IN_REVIEW'
     ).length
     stats.value.approved = response.content.filter(
-      (a: any) => a.status === 'APPROVED'
+      (a) => a.status === 'APPROVED'
     ).length
     stats.value.rejected = response.content.filter(
-      (a: any) => a.status === 'REJECTED'
+      (a) => a.status === 'REJECTED'
     ).length
   } catch (error) {
     console.error('Failed to load applications:', error)

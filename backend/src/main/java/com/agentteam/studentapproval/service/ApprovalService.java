@@ -26,7 +26,17 @@ public class ApprovalService {
 
     @Transactional(readOnly = true)
     public List<Approval> getPendingApprovals(String userId) {
-        return approvalRepository.findPendingApprovalsByApprover(userId);
+        List<Approval> approvals = approvalRepository.findPendingApprovalsByApprover(userId);
+        // Trigger lazy loading of approver while in transaction
+        approvals.forEach(a -> {
+            if (a.getApprover() != null) {
+                a.getApprover().getDisplayName();
+            }
+            if (a.getApplication() != null && a.getApplication().getApplicant() != null) {
+                a.getApplication().getApplicant().getDisplayName();
+            }
+        });
+        return approvals;
     }
 
     @Transactional(readOnly = true)

@@ -12,15 +12,16 @@ import java.util.Optional;
 @Repository
 public interface ApprovalRepository extends JpaRepository<Approval, String> {
 
-    List<Approval> findByApplicationId(String applicationId);
+    @Query("SELECT a FROM Approval a JOIN FETCH a.application WHERE a.application.id = :applicationId")
+    List<Approval> findByApplicationId(@Param("applicationId") String applicationId);
 
     Optional<Approval> findByApplicationIdAndApproverId(String applicationId, String approverId);
 
     boolean existsByApplicationIdAndApproverId(String applicationId, String approverId);
 
-    @Query("SELECT a FROM Approval a WHERE a.application.id = :applicationId AND a.action = 'PENDING'")
+    @Query("SELECT a FROM Approval a JOIN FETCH a.application WHERE a.application.id = :applicationId AND a.action = 'PENDING'")
     List<Approval> findPendingApprovalsByApplication(@Param("applicationId") String applicationId);
 
-    @Query("SELECT a FROM Approval a WHERE a.approver.id = :approverId AND a.action = 'PENDING'")
+    @Query("SELECT a FROM Approval a JOIN FETCH a.application LEFT JOIN FETCH a.approver WHERE a.approver.id = :approverId AND a.action = 'PENDING'")
     List<Approval> findPendingApprovalsByApprover(@Param("approverId") String approverId);
 }
